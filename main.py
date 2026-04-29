@@ -16,23 +16,31 @@ font = pygame.font.Font(None, 36)
 clock = pygame.time.Clock()
 FPS = 30
 
+# Draw grid for positioning
+def draw_grd():
+    pygame.draw.line(SCREEN, (0,0,0), (0, HEIGHT/2), (WIDTH, HEIGHT/2))
+    pygame.draw.line(SCREEN, (0,0,0), (WIDTH/2, 0), (WIDTH/2, HEIGHT))
 
-# Sections Dicitionary and List
+
+# Sections Dicitionary
 sections_dic = {
-    7:np.array([f"7.{i}" for i in range(1,9)]),
+    7:np.array(["7.1", "7.2", "7.3", "7.4", "7.7", "7.8"]),
     8:np.array(["8.1", "8.2"]),
-    9:np.array(["9.1", "9.3", "9.5"]),
+    9:np.array(["9.3", "9.5"]),
     10:np.array([f"10.{i}" for i in range(1,5)]),
     11:np.hstack([np.array([f"11.{i}" for i in range (1,7)]), np.array([f"11.{i}" for i in range (8,10)])])
             }
 
+# 11.10 looks like 11.11 behind the scenes for obvious reasons
 sections_dic.update({11:np.append(sections_dic.get(11), 11.11)})
+
+# Array of all the section numbers
 sections_ary = np.hstack([sections_dic.get(i) for i in range(7,12)])
 
 # Four Units
 units_dic = {
-    1:np.array([f"7.{i}" for i in range (1,8)]),
-    2:np.array(["7.8", "8.1", "8.2", "9.1", "9.3", "9.5", "10.1", "10.2"]),
+    1:np.array(["7.1", "7.2", "7.3", "7.4", "7.7", "7.8"]),
+    2:np.array(["7.8", "8.1", "8.2", "9.3", "9.5", "10.1", "10.2"]),
     3:np.array(["10.3", "10.4", "11.1", "11.2", "11.3", "11.4"]),
     4:np.array(["11.5", "11.6", "11.8", "11.9", "11.11"])
 }
@@ -64,9 +72,8 @@ async def main():
                         await question.run(SCREEN, button_sprt.section_str)
         
 
-        # Update pygame window
-        # pygame.draw.line(SCREEN, (0,255,0), (0, HEIGHT/2), (WIDTH, HEIGHT/2))
-        # pygame.draw.line(SCREEN, (0,255,0), (WIDTH/2, 0), (WIDTH/2, HEIGHT))
+        # Update pygame window and async\
+        draw_grd()
         buttons_grp.update(SCREEN)
         pygame.display.update()
         await asyncio.sleep(0)

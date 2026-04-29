@@ -33,6 +33,13 @@ class button(pygame.sprite.Sprite):
         y_border_size = int(HEIGHT/2 - (y_distance * (len(units.get(self.unit)) / 2) + 1))
         self.centerx = x_border_size + ((self.unit-1) * x_distance)
         self.centery = y_border_size+y_distance*.5 + np.where(units.get(self.unit) == self.section_str)[0][0] * y_distance
+
+        # Temporary hard coding an annoying thing with unit 2 I don't have time to care about
+        # I disgust myself
+        if(self.unit == 2):
+            self.centery -= (self.size + 5)
+    
+
         self.center = (self.centerx, self.centery)
 
         # Collision rect
