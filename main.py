@@ -1,8 +1,11 @@
 import pygame, random
 import numpy as np
-from buttons import button
 import question
 import asyncio
+from buttons import button
+from sonic import sonic_sprite
+from players import player_sprite
+
 
 # Pygame Setup
 WIDTH = 1200
@@ -31,7 +34,7 @@ sections_dic = {
     11:np.hstack([np.array([f"11.{i}" for i in range (1,7)]), np.array([f"11.{i}" for i in range (8,10)])])
             }
 
-# 11.10 looks like 11.11 behind the scenes for obvious reasons
+# 11.10 looks like 11.11 behind the scenes and it's annoying
 sections_dic.update({11:np.append(sections_dic.get(11), 11.11)})
 
 # Array of all the section numbers
@@ -50,9 +53,19 @@ buttons_grp = pygame.sprite.Group()
 for section in sections_ary:
     buttons_grp.add(button(section, units_dic, sections_dic, font))
 
-# Main Runn
+# The man himself
+sonic_sprt = sonic_sprite()
+
+# Player Initizalization
+print("Player 1: ")
+player1 = player_sprite(1, input())
+print("Player 2: ")
+player2 = player_sprite(2, input())
+
+# Main Runner
 async def main():
     running = True
+    await sonic_sprt.intro(SCREEN, buttons_grp)
     while running:
         # Delay between frames then wipe screen before drawing
         clock.tick(FPS)
@@ -69,13 +82,16 @@ async def main():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 for button_sprt in buttons_grp:
                     if button_sprt.rect.collidepoint(event.pos):
+                        # Run the question corresponding to button pressed
                         await question.run(SCREEN, button_sprt.section_str)
         
 
-        # Update pygame window and async\
-        draw_grd()
+        # Update pygame window and async
+        # draw_grd()
         buttons_grp.update(SCREEN)
+        sonic_sprt.update(SCREEN)
         pygame.display.update()
         await asyncio.sleep(0)
+
 
 asyncio.run(main())

@@ -8,7 +8,7 @@ BG_COLOR = (70, 100, 70)
 async def run(screen, section, ):
 
     # Image initializing
-    background_img = pygame.image.load("questions/jeopardy_background.png").convert_alpha()
+    background_img = pygame.image.load("images/jeopardy_background.png").convert_alpha()
     bg_img_rect = background_img.get_rect()
     bg_img_rect.center = (WIDTH/2, HEIGHT/2)     
     
@@ -34,7 +34,7 @@ async def run(screen, section, ):
                     if choice.collidepoint(event.pos):
                         try:
                             money = (choices.index(choice) + 1) * 100
-                            question_img = pygame.image.load(f"questions/{section}-{money}.png").convert_alpha()
+                            question_img = pygame.image.load(f"images/questions/{section}-{money}.png").convert_alpha()
                             q_img_rect = question_img.get_rect()
                             q_img_rect.center = (WIDTH/2, HEIGHT/2) 
                             show_q = True
