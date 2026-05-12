@@ -17,20 +17,27 @@ class sonic_sprite(pygame.sprite.Sprite):
         self.original_image = pygame.image.load("images/sonic_image.png")
         self.rect = self.original_image.get_rect()
         self.image = pygame.transform.smoothscale_by(self.original_image, self.size/self.rect.height)
-        self.rect = self.image.get_rect(center=(WIDTH + self.size, 200))
+        self.rect = self.image.get_rect(center=(WIDTH + self.size, 150))
         self.mask = pygame.mask.from_surface(self.image)
         self.final_x = WIDTH/2
 
 
         # Sonic things
-        self.original_health = 10000
+        self.original_health = 5000
         self.health = self.original_health
         self.in_position = False
 
 
     def damage(self, damage):
         self.health -= damage
+        print("\n")
+        print(damage, "Damage Dealt")
         print("Sonic Health Left:", self.health)
+        print("Kill that mf.")
+        print("\n")
+
+        # He still kickin?
+        return False if self.health <= 0 else True
 
 
 
@@ -51,7 +58,7 @@ class sonic_sprite(pygame.sprite.Sprite):
     
 
     async def intro(self, screen, buttons):
-        move_speed = -(self.rect.centerx - self.final_x) /15
+        move_speed = -(self.rect.centerx - self.final_x) /10
         # moving = True
         bounces = 0
 
@@ -73,8 +80,8 @@ class sonic_sprite(pygame.sprite.Sprite):
 
             # Shoot left across the screen, right slightly slower, then slowkly to the middle
             # Assert dominance
-            left_barrier = -1000
-            right_barrier = WIDTH + 1000
+            left_barrier = -2000
+            right_barrier = WIDTH + 2000
             self.rect.centerx += move_speed
             if self.rect.centerx < left_barrier or self.rect.centerx > right_barrier:
                 move_speed *= -0.7

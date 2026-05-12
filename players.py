@@ -6,28 +6,34 @@ HEIGHT = 800
 BG_COLOR = (70, 100, 70)
 clock = pygame.time.Clock()
 FPS = 30
-
 class player_sprite(pygame.sprite.Sprite):
-    def __init__(self, player_num, name):
+    def __init__(self, player_num, name, pfont):
         # Initialize sprite class
         super().__init__()
 
+        font = pygame.font.Font(None, 45)
         # Image initialize
-        self.size = 250
-        image_path = "images/"
-        self.original_image = pygame.image.load("images/sonic_image.png")
+        self.size = 200
+        # Ella is yellow toad, Joshua is orange yoshi
+        image_path = "images/yellow_toad.png" if name == "Ella" else "images/orange_yoshi.png"
+        self.original_image = pygame.image.load(image_path)
         self.rect = self.original_image.get_rect()
         self.image = pygame.transform.smoothscale_by(self.original_image, self.size/self.rect.height)
-        x = WIDTH/2 - 200 if player_num == 1 else WIDTH/2 + 200
-        y = HEIGHT - self.size * 1.5
-        self.rect = self.image.get_rect(center=(x,y))
+        x_gap = 275
+        self.x = WIDTH/2 - x_gap if player_num == 1 else WIDTH/2 + x_gap
+        self.final_y = HEIGHT - self.size * 0.5 - 50
+        self.rect = self.image.get_rect(center=(self.x,HEIGHT+200))
         self.mask = pygame.mask.from_surface(self.image)
 
-    async def intro(self, screen, buttons):
-        move_speed = -(self.rect.centerx - self.final_x) /15
-        # moving = True
-        bounces = 0
 
+        self.text = font.render(name, True, "orange" if name == "Joshua" else "yellow")
+        self.text_rect = self.text.get_rect(center=(self.rect.centerx + 15, self.final_y + self.size / 2 + 20))
+        
+
+        self.in_position = False
+
+    async def intro(self, screen, buttons, sonic, player1=""):
+        move_spd = 10
 
         running = True
         while running:
@@ -41,28 +47,24 @@ class player_sprite(pygame.sprite.Sprite):
                 if event.type == pygame.QUIT:
                     running = False
             
-
-            # Im hardcoding this bc I'm low on time, which is disgusting and I sincerely apologize future me
-
-            # Shoot left across the screen, right slightly slower, then slowkly to the middle
-            # Assert dominance
-            left_barrier = -1000
-            right_barrier = WIDTH + 1000
-            self.rect.centerx += move_speed
-            if self.rect.centerx < left_barrier or self.rect.centerx > right_barrier:
-                move_speed *= -0.7
-                bounces += 1
-            if bounces >= 2 and abs(self.rect.centerx - self.final_x) < 20:
-                self.rect.centerx = self.final_x
+            self.rect.centery -= move_spd
+            # Just stroll in from the bottom all chill like (slide a static png slowly up from out of frame)
+            if abs(self.rect.centery - self.final_y) <= 10:
+                self.rect.centery = self.final_y
                 self.in_position = True
                 running = False
-            
-            
+    
             
             
             # pygame and asyncio refresh
             self.update(screen)
             buttons.update(screen)
+            sonic.update(screen)
+            try:
+                player1.update(screen)
+            except:
+                print("Hello it is me player 1 here I am entering")
+        
             pygame.display.update()
         await asyncio.sleep(0)
 
@@ -70,3 +72,6 @@ class player_sprite(pygame.sprite.Sprite):
     def update(self, screen):
         # Draw sonic on screen
         screen.blit(self.image, self.rect)
+
+        if self.in_position:
+            screen.blit(self.text, self.text_rect)

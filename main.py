@@ -36,6 +36,7 @@ sections_dic = {
 
 # 11.10 looks like 11.11 behind the scenes and it's annoying
 sections_dic.update({11:np.append(sections_dic.get(11), 11.11)})
+# Future me here - just type out the numbers holy fuck this is sm more annoying to read
 
 # Array of all the section numbers
 sections_ary = np.hstack([sections_dic.get(i) for i in range(7,12)])
@@ -47,6 +48,7 @@ units_dic = {
     3:np.array(["10.3", "10.4", "11.1", "11.2", "11.3", "11.4"]),
     4:np.array(["11.5", "11.6", "11.8", "11.9", "11.11"])
 }
+# See this is prettier to look at. No one cares you know list comprehension and f strings
 
 # Buttons for all the questions
 buttons_grp = pygame.sprite.Group()
@@ -55,17 +57,29 @@ for section in sections_ary:
 
 # The man himself
 sonic_sprt = sonic_sprite()
+sonic_alive = True
 
 # Player Initizalization
-print("Player 1: ")
-player1 = player_sprite(1, input())
-print("Player 2: ")
-player2 = player_sprite(2, input())
+player1 = player_sprite(1, "Ella", font)
+player2 = player_sprite(2, "Joshua", font)
+players_grp = pygame.sprite.Group(player1, player2)
+
+# This isn't my fav way to do this, but it'll work for now
+sonic_damage = 0
+sonic_gettin_shot = False
 
 # Main Runner
 async def main():
     running = True
-    await sonic_sprt.intro(SCREEN, buttons_grp)
+    # await sonic_sprt.intro(SCREEN, buttons_grp)
+    # await player1.intro(SCREEN, buttons_grp)
+    # await player2.intro(SCREEN, buttons_grp)
+
+    # Are they here yet??
+    sonic_here = False
+    p1_here = False
+    p2_here = False
+
     while running:
         # Delay between frames then wipe screen before drawing
         clock.tick(FPS)
@@ -79,17 +93,38 @@ async def main():
                 running = False
 
             # Check if button clicked
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 for button_sprt in buttons_grp:
                     if button_sprt.rect.collidepoint(event.pos):
                         # Run the question corresponding to button pressed
-                        await question.run(SCREEN, button_sprt.section_str)
-        
+                        sonic_damage = await question.run(SCREEN, button_sprt.section_str)
+                        print(sonic_damage)
+                        sonic_sprt.damage(sonic_damage)
+            
+
+            elif event.type == pygame.KEYDOWN:
+            # Bring em in
+                if event.key == pygame.K_SPACE:
+                    if not sonic_here:
+                        await sonic_sprt.intro(SCREEN, buttons_grp)
+                        sonic_here = True
+                    elif not p1_here:
+                        await player1.intro(SCREEN, buttons_grp, sonic_sprt)
+                        p1_here = True
+                    elif not p2_here:
+                        await player2.intro(SCREEN, buttons_grp, sonic_sprt, player1)
+                        p2_here = True
+                    else:  
+                        print("Gang's all here")
+
+        # Did we kill him?
+
 
         # Update pygame window and async
         # draw_grd()
         buttons_grp.update(SCREEN)
         sonic_sprt.update(SCREEN)
+        players_grp.update(SCREEN)
         pygame.display.update()
         await asyncio.sleep(0)
 

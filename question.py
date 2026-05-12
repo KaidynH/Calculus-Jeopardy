@@ -5,7 +5,7 @@ WIDTH = 1200
 HEIGHT = 800
 BG_COLOR = (70, 100, 70)
 
-async def run(screen, section, ):
+async def run(screen, section):
 
     # Image initializing
     background_img = pygame.image.load("images/jeopardy_background.png").convert_alpha()
@@ -17,7 +17,7 @@ async def run(screen, section, ):
 
     # Show question gate
     show_q = False
-
+    money = 0
     running = True
     while running:
         screen.fill(BG_COLOR)
@@ -50,3 +50,5 @@ async def run(screen, section, ):
         # pygame and asyncio refresh
         pygame.display.update()
         await asyncio.sleep(0)
+    
+    return money

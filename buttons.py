@@ -46,11 +46,12 @@ class button(pygame.sprite.Sprite):
         self.rect.center = self.center
 
         # Button text
+        # I fucking hate you chapter 11.10 :(
         self.text = font.render(self.section_str, True, "black") if self.section_float != 11.11 else font.render("11.10", True, "black")
         self.text_rect = self.text.get_rect(center=self.center)
 
         
-
+    # Holy shit this one is slightly different than the others  :
     def update(self, screen):
         pygame.draw.circle(screen, (255,255,255), self.center, self.size+5)
         pygame.draw.circle(screen, self.color, self.center, self.size)
